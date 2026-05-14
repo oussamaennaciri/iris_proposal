@@ -25,6 +25,9 @@
 \hyphenation{op-tical net-works semi-conduc-tor}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 
+% Consistent placeholder note style for end-of-course sections
+\newcommand{\placeholder}[1]{\textit{\textcolor{gray}{#1}}}
+
 \begin{document}
 
 \title{International Risk Intelligence System}
@@ -39,147 +42,57 @@ Regis University, Denver, CO, USA \\
 
 
 \begin{abstract}
-Geopolitical instability is accelerating. The tools built to track it are
-either classified, nationally biased, or built for financial markets. The
-United Nations and multilateral agencies have nothing purpose-built for them.
-This project builds it.
-
-The International Risk Intelligence System is a near-real-time geopolitical
-intelligence platform built on nine open data sources: GDELT, ACLED, the
-World Bank API, UN Comtrade, the UNHCR Refugee Statistics API, OpenSanctions,
-the UN General Assembly Voting dataset, the Varieties of Democracy dataset,
-and the Geopolitical Risk Index. These sources feed a four-layer system: an
-Apache Airflow ingestion pipeline, a Neo4j and NetworkX knowledge graph, a
-machine learning layer, and a Streamlit dashboard.
-
-The machine learning layer produces two outputs. An XGBoost model scores every
-UN member state on a 0 to 100 instability scale, updated on each pipeline run.
-An Isolation Forest model monitors each country's risk trajectory and fires an
-alert when something unexpected shifts. Both models are validated against
-historical ground truth from established risk indices and documented conflict
-onset events.
-
-The result is a live, browser-accessible intelligence platform that shows
-where instability is rising, which relationships are breaking down, and when
-something just changed. It is open, neutral, and designed for the organizations
-that need it most: the UN, ICRC, World Bank, and foreign ministries without
-access to Palantir.
+Geopolitical instability is accelerating. The tools built to track it are either classified, nationally biased, or built for financial markets. The United Nations and multilateral agencies have nothing purpose-built for them. This project builds it. The International Risk Intelligence System is a near-real-time geopolitical intelligence platform built on nine open data sources: GDELT, ACLED, the World Bank API, UN Comtrade, the UNHCR Refugee Statistics API, OpenSanctions, the UN General Assembly Voting dataset, the Varieties of Democracy dataset, and the Geopolitical Risk Index. These sources feed a four-layer system: an Apache Airflow ingestion pipeline, a Neo4j and NetworkX knowledge graph, a machine learning layer, and a Streamlit dashboard. The machine learning layer produces two outputs. An XGBoost model scores every UN member state on a 0 to 100 instability scale, updated on each pipeline run. An Isolation Forest model monitors each country's risk trajectory and fires an alert when something unexpected shifts. Both models are validated against historical ground truth from established risk indices and documented conflict onset events. The result is a live, browser-accessible intelligence platform that shows where instability is rising, which relationships are breaking down, and when something just changed. It is open, neutral, and designed for the organizations that need it most: the United Nations, the ICRC, the World Bank, and foreign ministries without access to Palantir.
 \end{abstract}
 
 
 \section{Introduction and Background}
 
-The multilateral system is under pressure. Countries are pulling back from
-international commitments, Security Council vetoes are paralyzing collective
-action, and crises are escalating faster than institutions can respond.
+The multilateral system is under pressure. Countries are pulling back from international commitments, Security Council vetoes are paralyzing collective action, and crises are escalating faster than institutions can respond.
 
-The tools that exist to track this are not built for the organizations trying
-to stop it. Palantir Gotham runs on classified infrastructure inside national
-governments. Bloomberg tracks geopolitical risk as a market variable. Recorded
-Future sells threat intelligence to corporations. None of these are accessible
-to, or designed for, the United Nations, the ICRC, or non-aligned foreign
-ministries.
+The tools that exist to track this are not built for the organizations trying to stop it. Palantir Gotham runs on classified infrastructure inside national governments. Bloomberg tracks geopolitical risk as a market variable. Recorded Future sells threat intelligence to corporations. None of these are accessible to, or designed for, the United Nations, the ICRC, or non-aligned foreign ministries.
 
-Academic systems like VIEWS \cite{views2023} and the EU Global Conflict Risk
-Index \cite{gcri2020} have demonstrated that open data can generate reliable
-conflict forecasts. But they are models, not platforms. They produce numbers
-without pipelines, interfaces, or decision-support infrastructure.
+Academic systems like VIEWS \cite{views2023} and the EU Global Conflict Risk Index \cite{gcri2020} have demonstrated that open data can generate reliable conflict forecasts. But they are models, not platforms. They produce numbers without pipelines, interfaces, or decision-support infrastructure.
 
-This project closes that gap. It builds a full-stack geopolitical intelligence
-system that is open, neutral, globally comprehensive, and designed from the
-ground up for multilateral decision-making.
+This project closes that gap. It builds a full-stack geopolitical intelligence system that is open, neutral, globally comprehensive, and designed from the ground up for multilateral decision-making.
 
 
 \section{Problem Statement}
 
-The question is: \textit{how can heterogeneous open data be integrated in
-near-real-time to produce accurate, explainable, country-level geopolitical
-risk intelligence for multilateral institutions?}
+The question is: \textit{how can heterogeneous open data be integrated in near-real-time to produce accurate, explainable, country-level geopolitical risk intelligence for multilateral institutions?}
 
-Three things make this urgent. First, the scale. ACLED recorded over 170,000
-conflict events in 2024. The UNHCR counted 117 million forcibly displaced
-persons as of early 2024. Decision makers need signals before crises peak, not
-after. Second, the data exists. Nine open sources cover events, economics,
-trade, displacement, sanctions, political alignment, and regime stability. They
-have never been unified into a single operational system. Third, existing tools
-fail the use case. They are static, nationally biased, or locked behind
-paywalls.
+Three things make this urgent. First, the scale. ACLED recorded over 170,000 conflict events in 2024. The UNHCR counted 117 million forcibly displaced persons as of early 2024. Decision makers need signals before crises peak, not after. Second, the data exists. Nine open sources cover events, economics, trade, displacement, sanctions, political alignment, and regime stability. They have never been unified into a single operational system. Third, existing tools fail the use case. They are static, nationally biased, or locked behind paywalls.
 
-The system covers every phase of the data lifecycle: collection across nine
-sources, preparation through schema normalization and feature engineering,
-exploration through country-level exploratory data analysis, modeling through
-two validated machine learning models, visualization through a live dashboard,
-and reporting through structured country outputs.
+The system covers every phase of the data lifecycle: collection across nine sources, preparation through schema normalization and feature engineering, exploration through country-level exploratory data analysis, modeling through two validated machine learning models, visualization through a live dashboard, and reporting through structured country outputs.
 
-This is the first open, neutral, multi-source geopolitical risk intelligence
-platform built for multilateral institutions.
+This is the first open, neutral, multi-source geopolitical risk intelligence platform built for multilateral institutions.
 
 
 \section{Related Work}
 
-The VIEWS project \cite{views2023} generates monthly conflict forecasts one to
-36 months ahead for every country globally. It proves open data can support
-institutional early warning at scale. But VIEWS is a model, not a platform. It
-has no unified pipeline, no graph layer, and no interface for operational use.
+The VIEWS project \cite{views2023} generates monthly conflict forecasts one to 36 months ahead for every country globally. It proves open data can support institutional early warning at scale. But VIEWS is a model, not a platform. It has no unified pipeline, no graph layer, and no interface for operational use.
 
-Iacoviello and colleagues \cite{iacoviello2025} showed that Random Forest
-models built on high-frequency news indicators significantly outperform
-econometric baselines for sovereign risk prediction across 42 countries. This
-validates the machine learning approach adopted here and motivates the
-inclusion of news sentiment as a core risk scorer feature. Filetti and
-colleagues \cite{tft2025} extend this with a hybrid temporal fusion
-architecture on GDELT data, winning the 2023 Algorithms for Threat Detection
-competition.
+Iacoviello and colleagues \cite{iacoviello2025} showed that Random Forest models built on high-frequency news indicators significantly outperform econometric baselines for sovereign risk prediction across 42 countries. This validates the machine learning approach adopted here and motivates the inclusion of news sentiment as a core risk scorer feature. Filetti and colleagues \cite{tft2025} extend this with a hybrid temporal fusion architecture on GDELT data, winning the 2023 Algorithms for Threat Detection competition.
 
-The EU Global Conflict Risk Index \cite{gcri2020} is the quantitative backbone
-of the EU Conflict Early Warning System. It covers all member states across
-political, economic, social, and security dimensions. It proves institutional
-demand for quantitative risk tools. It also exposes the core gap: infrequent
-updates and no real-time operational capability. Randahl and Vegelius
-\cite{mlconflict2024} document consistent machine learning accuracy gains over
-expert judgment in conflict forecasting while identifying explainability and
-operational accessibility as unsolved problems.
+The EU Global Conflict Risk Index \cite{gcri2020} is the quantitative backbone of the EU Conflict Early Warning System. It covers all member states across political, economic, social, and security dimensions. It proves institutional demand for quantitative risk tools. It also exposes the core gap: infrequent updates and no real-time operational capability. Randahl and Vegelius \cite{mlconflict2024} document consistent machine learning accuracy gains over expert judgment in conflict forecasting while identifying explainability and operational accessibility as unsolved problems.
 
-Rudolph and colleagues \cite{rudolph2026} showed that temporal knowledge
-graphs built from GDELT, ACLED, and ICEWS enable more accurate geopolitical
-event reasoning than flat event tables. This directly motivates the graph
-layer. Meier and colleagues \cite{temporalgraph2025} confirm this pattern
-across 25 years of geopolitical export control dynamics.
+Rudolph and colleagues \cite{rudolph2026} showed that temporal knowledge graphs built from GDELT, ACLED, and ICEWS enable more accurate geopolitical event reasoning than flat event tables. This directly motivates the graph layer. Meier and colleagues \cite{temporalgraph2025} confirm this pattern across 25 years of geopolitical export control dynamics.
 
-The SAGE system \cite{sage2024} demonstrated that combining machine forecasts
-with human analyst review outperforms either approach alone. This motivates
-the explainability design: every risk score ships with feature importance so
-analysts can interrogate the output. Scotti and colleagues \cite{migration2025}
-and Schutte and colleagues \cite{displacement2025} validate multi-source data
-fusion by showing ACLED-plus-socioeconomic models significantly outperform
-single-source forecasts. Norbutas and Corten \cite{gdelt2020} establish GDELT
-as a reliable source for structured political signal extraction at scale.
+The SAGE system \cite{sage2024} demonstrated that combining machine forecasts with human analyst review outperforms either approach alone. This motivates the explainability design: every risk score ships with feature importance so analysts can interrogate the output. Scotti and colleagues \cite{migration2025} and Schutte and colleagues \cite{displacement2025} validate multi-source data fusion by showing ACLED-plus-socioeconomic models significantly outperform single-source forecasts. Norbutas and Corten \cite{gdelt2020} establish GDELT as a reliable source for structured political signal extraction at scale.
 
-The gap is consistent across all reviewed work: no system integrates the full
-signal spectrum into a unified, operational, multilateral-facing platform.
-This project builds it.
+The gap is consistent across all reviewed work: no system integrates the full signal spectrum into a unified, operational, multilateral-facing platform. This project builds it.
 
 
 \section{Methodology and Approach}
-\textcolor{red}{To be completed at end of course with full documentation of
-the implemented pipeline, graph construction, model training, hyperparameter
-tuning, validation procedures, and evaluation metrics.}
 
-The system will be implemented in Python across four layers: an Apache Airflow
-ingestion pipeline, a NetworkX and Neo4j graph engine, an XGBoost risk scorer
-and Isolation Forest anomaly detector, and a Streamlit dashboard with Pyvis
-graph visualization. All code will be version-controlled on GitHub with full
-documentation and a reproducible setup.
+The system will be implemented in Python across four layers: an Apache Airflow ingestion pipeline, a NetworkX and Neo4j graph engine, an XGBoost risk scorer and Isolation Forest anomaly detector, and a Streamlit dashboard with Pyvis graph visualization. All code will be version-controlled on GitHub with full documentation and a reproducible setup.
+
+\placeholder{Full documentation of pipeline architecture, graph construction, model training, hyperparameter tuning, validation procedures, and evaluation metrics will be completed at the end of the course.}
 
 
 \section{Data Description}
 
-\textbf{Basic source information provided for initial proposal submission.
-Full data analysis, quality assurance, and ethical documentation to be
-completed at end of course.}
-
-Nine sources. Each has a distinct role. No overlap. Table~\ref{tab:sources}
-summarizes the full stack.
+Nine sources. Each has a distinct role. No overlap. Table~\ref{tab:sources} summarizes the full stack. All data is aggregate and country-level. No personally identifiable information is collected. All sources are open-licensed for non-commercial academic research. Data is stored in PostgreSQL with version-controlled ingestion scripts for full reproducibility.
 
 \begin{table}[ht]
 \caption{Data Sources}
@@ -203,43 +116,29 @@ GPR Index & News-based geopolitical risk scores & Monthly & Open download \\
 \end{tabular}
 \end{table}
 
-All data is aggregate and country-level. No personally identifiable
-information is collected. All sources are open-licensed for non-commercial
-academic research. Data is stored in PostgreSQL with version-controlled
-ingestion scripts for full reproducibility.
+\placeholder{Full data analysis, quality assurance procedures, and detailed ethical considerations will be completed at the end of the course.}
 
 
 \section{Expected Outcomes}
 
 Five deliverables by Week 8.
 
-\textbf{1. Nine-source ingestion pipeline.} Apache Airflow orchestrating all
-sources across schedules from 15-minute to annual. Fully documented and
-version-controlled on GitHub.
+\textbf{1. Nine-source ingestion pipeline.} Apache Airflow orchestrating all sources across schedules from 15-minute to annual. Fully documented and version-controlled on GitHub.
 
-\textbf{2. XGBoost risk scorer.} Trained against GPR Index historical values,
-validated on conflict onset holdout events. Outputs a 0 to 100 instability
-score per country with feature importance on every run.
+\textbf{2. XGBoost risk scorer.} Trained against GPR Index historical values, validated on conflict onset holdout events. Outputs a 0 to 100 instability score per country with feature importance on every run.
 
-\textbf{3. Isolation Forest anomaly detector.} Monitors each country's risk
-trajectory. Validated against documented historical shocks. Outputs a binary
-alert, severity level, and the primary feature driving the deviation.
+\textbf{3. Isolation Forest anomaly detector.} Monitors each country's risk trajectory. Validated against documented historical shocks. Outputs a binary alert, severity level, and the primary feature driving the deviation.
 
-\textbf{4. Neo4j knowledge graph.} Updated on each pipeline run. Countries,
-leaders, and organizations as nodes. Treaties, trade flows, sanctions, votes,
-and conflict events as edges. Queryable for bilateral and multilateral
-relationship analysis.
+\textbf{4. Neo4j knowledge graph.} Updated on each pipeline run. Countries, leaders, and organizations as nodes. Treaties, trade flows, sanctions, votes, and conflict events as edges. Queryable for bilateral and multilateral relationship analysis.
 
-\textbf{5. Streamlit dashboard.} Live world risk heatmap, country drill-downs,
-event feed, alert panel, and Pyvis interactive graph visualization.
+\textbf{5. Streamlit dashboard.} Live world risk heatmap, country drill-downs, event feed, alert panel, and Pyvis interactive graph visualization.
 
-\textit{Limitation:} the risk scorer trains on existing indices that carry
-their own methodological assumptions. Outputs are decision support signals,
-not ground truth. Future versions should incorporate analyst feedback loops
-as demonstrated by the SAGE system \cite{sage2024}.
+The risk scorer trains on existing indices that carry their own methodological assumptions. Outputs are decision support signals, not ground truth. Future versions should incorporate analyst feedback loops as demonstrated by the SAGE system \cite{sage2024}.
 
 
 \section{Timeline}
+
+The project runs across eight weeks aligned with mandatory course milestones. Table~\ref{tab:timeline} maps each week to its focus and deliverable.
 
 \begin{table}[ht]
 \caption{Eight-Week Project Timeline}
@@ -253,34 +152,27 @@ as demonstrated by the SAGE system \cite{sage2024}.
 1 & Setup and proposal &
   Proposal submitted, GitHub initialized, all API access confirmed \\
 2 & Core pipeline &
-  GDELT and ACLED scripts running, PostgreSQL schema live, Airflow DAGs
-  configured \\
+  GDELT and ACLED scripts running, PostgreSQL schema live, Airflow DAGs configured \\
 3 & Remaining sources and EDA &
-  All 9 sources integrated, CAMEO mapping built, feature engineering begun,
-  EDA complete \\
+  All 9 sources integrated, CAMEO mapping built, feature engineering begun, EDA complete \\
 4 & Prototype presentation &
-  Working pipeline demonstrated live, prototype risk scores generated,
-  \textbf{mandatory mid-point presentation} \\
+  Working pipeline demonstrated live, prototype risk scores generated, \textbf{mandatory mid-point presentation} \\
 5 & Risk Scorer &
   XGBoost trained, validated, and tuned against GPR benchmark \\
 6 & Anomaly Detector and Graph &
-  Isolation Forest validated on historical shocks, NetworkX graph built,
-  Neo4j loaded \\
+  Isolation Forest validated on historical shocks, NetworkX graph built, Neo4j loaded \\
 7 & Dashboard and integration &
-  Streamlit dashboard complete, all components integrated, final
-  presentation rehearsed \\
+  Streamlit dashboard complete, all components integrated, final presentation rehearsed \\
 8 & Final delivery &
-  Live system demonstrated, Regis Portfolio submitted, final report
-  submitted \\
+  Live system demonstrated, Regis Portfolio submitted, final report submitted \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 
 \section{Conclusion}
-\textcolor{red}{To be completed at end of course, synthesizing the project
-findings, contribution to data science methodology and the multilateral
-intelligence domain, and directions for future development.}
+
+\placeholder{Final synthesis of project findings, contribution to data science methodology and the multilateral intelligence domain, and directions for future development will be completed at the end of the course.}
 
 
 \bibliographystyle{IEEEtran}
