@@ -1,0 +1,406 @@
+\documentclass[12pt, onecolumn]{IEEEtran}
+\usepackage{color,soul}
+\usepackage{ifpdf}
+\usepackage{amsmath}
+\usepackage{algorithmic}
+\usepackage{array}
+\ifCLASSOPTIONcompsoc
+  \usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
+\else
+  \usepackage[caption=false,font=footnotesize]{subfig}
+\fi
+\usepackage{stfloats}
+\usepackage{url}
+\hyphenation{op-tical net-works semi-conduc-tor}
+\ifCLASSOPTIONcompsoc
+  \usepackage[nocompress]{cite}
+\else
+  \usepackage{cite}
+\fi
+\ifCLASSINFOpdf
+  \usepackage[pdftex]{graphicx}
+  \graphicspath{{figures/}}
+  \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  \usepackage[dvips]{graphicx}
+  \DeclareGraphicsExtensions{.eps}
+\fi
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+\usepackage{eqparbox}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\usepackage[caption=false]{subfig}
+\usepackage{booktabs}
+\usepackage{amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{pifont}
+\usepackage{verbatim}
+\usepackage{tabularx}
+\usepackage{textcomp}
+\usepackage{float}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{cite}
+\usepackage[normalem]{ulem}
+\usepackage{longtable}
+
+\begin{document}
+
+\title{International Risk Intelligence System}
+
+\author{Oussama Ennaciri \\
+MS Data Science \\
+Anderson College of Business and Computing \\
+Regis University, Denver, CO, USA \\
+\texttt{oussamamennaciri@gmail.com}}
+
+\maketitle
+
+
+% ---------------------------------------------------------------
+\begin{abstract}
+The increasing frequency of geopolitical instability, interstate conflict, and
+institutional breakdown has intensified the demand for timely, evidence-based
+intelligence tools accessible to multilateral organizations and international
+agencies. Existing systems such as Palantir Gotham and Bloomberg Terminal are
+proprietary, nationally oriented, or financially motivated, leaving the United
+Nations, humanitarian agencies, and neutral multilateral bodies without open,
+transparent alternatives. This project proposes the design and development of
+the International Risk Intelligence System, a near-real-time geopolitical
+intelligence platform that ingests, integrates, and models data from nine open
+international data sources to produce country-level risk scores, anomaly
+alerts, and relationship graphs for global decision support.
+
+The system is built across four architectural layers: a multi-source ingestion
+pipeline orchestrated with Apache Airflow, a knowledge graph engine built on
+NetworkX and Neo4j, a machine learning layer consisting of an XGBoost risk
+scorer and an Isolation Forest anomaly detector, and a Streamlit dashboard
+delivering live visualizations, a world risk heatmap, a country event feed,
+and an alert panel. Data sources include the GDELT Project, ACLED, the World
+Bank API, UN Comtrade, the UNHCR Refugee Statistics API, OpenSanctions, the
+UN General Assembly Voting dataset, the Varieties of Democracy dataset, and
+the Geopolitical Risk Index. The system is benchmarked against established
+geopolitical risk indices and validated on known historical conflict onset
+events. The anticipated contribution is a transparent, open-source, globally
+neutral intelligence tool that addresses a structural gap in the multilateral
+decision-making ecosystem.
+\end{abstract}
+
+
+% ---------------------------------------------------------------
+\section{Introduction and Background}
+
+The post-Cold War multilateral order has faced sustained pressure from rising
+nationalist movements, great power competition, and the erosion of
+international legal frameworks. The United Nations Secretary-General's 2023
+report on the reform of the multilateral system identified a critical
+operational gap: the absence of accessible, neutral, and data-driven tools to
+support early warning and collective action among member states. While
+intelligence-grade platforms such as Palantir Gotham serve national governments
+with classified infrastructure, and financial terminals such as Bloomberg
+aggregate geopolitical signals for market participants, no equivalent
+open-access system exists for multilateral institutions whose mandates require
+political neutrality and global coverage.
+
+Academic research has demonstrated the feasibility of machine learning
+approaches to geopolitical risk prediction. Projects such as the VIEWS
+forecasting system \cite{views2023}, the EU Global Conflict Risk Index
+\cite{gcri2020}, and ACLED's Conflict Alert System have individually shown that
+open data sources can generate reliable conflict forecasts up to 36 months in
+advance. However, these systems remain siloed, domain-specific, and
+inaccessible as unified platforms for operational decision support. None
+integrates the full spectrum of geopolitical signals including trade
+dependency, political alignment, sanction networks, displacement flows, and
+regime stability into a single real-time intelligence layer.
+
+This project addresses that gap by building a full-stack geopolitical
+intelligence system grounded in open data, reproducible methods, and
+transparent modeling. The system is designed with the United Nations, the
+International Committee of the Red Cross, the World Bank, Amnesty
+International, and foreign ministries of non-aligned states as its primary
+users. Its architecture is intentionally open and cloud-deployable, making it
+structurally accessible to any organization regardless of national affiliation
+or budget.
+
+
+% ---------------------------------------------------------------
+\section{Problem Statement}
+
+The central question this project addresses is: \textit{how can heterogeneous,
+multi-source open data be integrated in near-real-time to generate accurate,
+explainable, and actionable country-level geopolitical risk intelligence for
+multilateral decision-making?}
+
+This problem is significant for three reasons. First, geopolitical instability
+is accelerating. ACLED documented over 170,000 conflict events globally in
+2024 alone, and the UNHCR reported a record 117 million forcibly displaced
+persons as of early 2024. Decision makers at international agencies require
+signals before crises peak, not after. Second, the data required to generate
+such signals is already publicly available across multiple sources but has
+never been unified into a single operational system oriented toward multilateral
+use. Third, existing risk indices are either static, nationally biased, or
+proprietary, making them unsuitable for the continuous and neutral intelligence
+function that multilateral agencies require.
+
+The system addresses all phases of the data lifecycle. Collection involves
+pulling from nine open APIs and datasets covering events, economics, trade,
+displacement, sanctions, voting, and regime characteristics. Preparation
+involves schema normalization, temporal alignment, and feature engineering
+across heterogeneous source formats. Exploration involves country-level
+exploratory data analysis and correlation mapping across sources. Modeling
+involves training and validating two machine learning models: a risk scorer
+producing continuous instability scores and an anomaly detector flagging
+unexpected trajectory shifts. Visualization involves a live dashboard
+delivering a world heatmap, country drill-downs, a knowledge graph, and an
+alert panel. Reporting involves structured country briefings generated from
+model outputs.
+
+The successful delivery of this system would provide the first open, neutral,
+multi-source geopolitical risk intelligence platform purpose-built for
+multilateral institutions, and one that is directly comparable in scope to
+commercially deployed systems such as Recorded Future and Verisk Maplecroft
+while remaining fully accessible to non-governmental and intergovernmental
+organizations.
+
+% Architecture figure will be added at end of course with final system diagram.
+
+
+% ---------------------------------------------------------------
+\section{Related Work}
+
+Significant academic and institutional work has established the theoretical and
+empirical foundations on which this project builds. This section reviews five
+representative contributions that directly inform the system design, and
+identifies the limitations that the International Risk Intelligence System is
+positioned to address.
+
+The VIEWS (Violence and Impacts Early Warning System) project \cite{views2023}
+represents the most comprehensive existing open-source conflict prediction
+effort, generating monthly probabilistic forecasts of political violence one to
+36 months ahead at national and subnational levels for all countries globally.
+VIEWS demonstrates that open data can support institutional early warning at
+scale and is actively used by UN agencies. However, VIEWS is a forecasting
+model, not an operational intelligence platform. It produces statistical
+outputs without a unified data pipeline, graph layer, or decision-support
+interface, and does not integrate economic, trade, or diplomatic alignment
+signals into its risk estimates.
+
+Iacoviello and colleagues \cite{iacoviello2025} introduced a high-frequency
+news-based indicator framework covering geopolitical risk, economic policy
+uncertainty, and political sentiment across 42 countries, demonstrating that
+Random Forest models incorporating such indicators significantly outperform
+traditional econometric baselines in predicting sovereign risk. Their work
+establishes the methodological validity of the machine learning approach
+adopted in this project and motivates the inclusion of news sentiment and
+economic indicators as core features of the risk scorer. Related work by
+Filetti and colleagues \cite{tft2025} further demonstrates that hybrid
+architectures combining temporal fusion transformers with probabilistic models
+outperform single-model baselines on GDELT-based conflict forecasting tasks.
+
+The Global Conflict Risk Index \cite{gcri2020}, developed by the European
+Commission Joint Research Centre, serves as the quantitative foundation of the
+EU Conflict Early Warning System and evaluates conflict risk across political,
+economic, social, environmental, and security dimensions for all UN member
+states. The GCRI demonstrates institutional appetite for quantitative risk
+tools and provides a validated feature framework that informs this project's
+feature engineering design. However, the GCRI is updated infrequently and is
+not designed for real-time operational use. The promise of machine learning for
+conflict forecasting more broadly is reviewed by Randahl and Vegelius
+\cite{mlconflict2024}, who document consistent accuracy improvements over
+expert judgment baselines while identifying key gaps in explainability and
+operational accessibility.
+
+Rudolph and colleagues \cite{rudolph2026} proposed a temporal knowledge graph
+architecture for geopolitical event forecasting using GDELT, ACLED, ICEWS, and
+POLECAT, demonstrating that representing geopolitical events as structured
+graph quadruples of entity, relation, and timestamp enables more accurate
+temporal reasoning than flat event tables. This work directly motivates the
+graph layer of the International Risk Intelligence System and validates the use
+of Neo4j and NetworkX for persistent relationship storage and analysis.
+Complementary temporal graph analysis by Meier and colleagues
+\cite{temporalgraph2025} on 25 years of geopolitical export control dynamics
+further demonstrates the value of graph-theoretic approaches for detecting
+patterns of escalation and coordination across political actors.
+
+The SAGE hybrid forecasting system \cite{sage2024} demonstrated that combining
+machine-generated probabilistic forecasts with human analyst assessments
+produces superior accuracy relative to either approach alone. While this
+project does not implement a human-in-the-loop component in its initial
+version, the SAGE findings motivate the explainability design of the risk
+scorer, which outputs feature importance rankings alongside scores so that
+analysts can interrogate and contextualize model outputs. Additional supporting
+evidence for the multi-source pipeline design is provided by Scotti and
+colleagues \cite{migration2025}, who demonstrate that ACLED-based conflict
+forecasts integrated with socioeconomic variables significantly improve
+forced migration predictions, validating the cross-domain data fusion approach
+adopted here. The early warning displacement model of Schutte and colleagues
+\cite{displacement2025} and the GDELT norm mining methodology of Norbutas and
+Corten \cite{gdelt2020} further support the use of multi-source event data
+for extracting structured political signals at scale.
+
+Collectively, these works establish that open data can support rigorous
+geopolitical risk modeling, that machine learning outperforms traditional
+methods on such tasks, and that graph-based representations of political
+relationships improve forecasting accuracy. The International Risk Intelligence
+System synthesizes these findings into a unified, operational, multilateral-
+facing platform that none of the reviewed works individually provides.
+
+
+% ---------------------------------------------------------------
+\section{Methodology and Approach}
+\textcolor{red}{Note: This section will be completed at the end of the course
+with full documentation of implemented methods, training procedures,
+hyperparameter tuning, and evaluation results.}
+
+The system will be implemented in Python across four layers: a multi-source
+ingestion pipeline, a graph engine, a machine learning layer, and an
+interactive dashboard. The ingestion pipeline will use Apache Airflow for
+scheduling and orchestration. The graph engine will use NetworkX for in-memory
+analysis and Neo4j for persistent storage. The machine learning layer will
+train an XGBoost risk scorer and an Isolation Forest anomaly detector. The
+dashboard will be built with Streamlit and Pyvis. All code will be
+version-controlled on GitHub with full documentation.
+
+
+% ---------------------------------------------------------------
+\section{Data Description}
+
+\textbf{Basic source information is provided below for the initial proposal
+submission. Full data analysis, quality assurance procedures, and ethical
+considerations will be documented at the end of the course.}
+
+The system integrates nine open international data sources, each serving a
+distinct analytical function within the pipeline. Table~\ref{tab:sources}
+summarizes the sources by content, update frequency, and access method.
+
+\begin{table}[ht]
+\caption{Data Sources for the International Risk Intelligence System}
+\label{tab:sources}
+\centering
+\begin{tabular}{p{2.8cm} p{3.5cm} p{1.8cm} p{2.2cm}}
+\hline
+\textbf{Source} & \textbf{Content} & \textbf{Frequency} & \textbf{Access} \\
+\hline
+GDELT Project & 250M+ global events, 300 categories, tone scores & 15 minutes & Free, BigQuery, CSV \\
+ACLED & Curated armed conflict and political violence events & Weekly & Free API, OAuth \\
+World Bank API & 16,000+ macroeconomic and development indicators & Quarterly & Free, no auth, JSON \\
+UN Comtrade & Bilateral trade flows between all member states & Monthly & Free API, JSON \\
+UNHCR Statistics & Displacement and stateless population data & Regular & Free API, JSON \\
+OpenSanctions & 332 global sanctions lists and politically exposed persons & Real-time & Free API, non-commercial \\
+UN GA Voting & Member state votes on all resolutions, 1946--2023 & Per session & Harvard Dataverse \\
+V-Dem & 500+ democracy and institutional quality indicators, 202 countries & Annual & Open download \\
+GPR Index & Monthly news-based geopolitical risk scores & Monthly & Open download \\
+\hline
+\end{tabular}
+\end{table}
+
+All data collected is aggregate and country-level. No personally identifiable
+information is collected or processed. All sources are openly licensed for
+non-commercial academic research. GDPR and HIPAA considerations are not
+applicable. Data will be stored in a local PostgreSQL database with structured
+schema and version control applied to all ingestion scripts to ensure
+reproducibility.
+
+
+% ---------------------------------------------------------------
+\section{Expected Outcomes}
+
+This project is expected to deliver five concrete outputs by the end of Week 8.
+
+The first output is a fully operational nine-source data ingestion pipeline
+orchestrated with Apache Airflow, capable of pulling, normalizing, and storing
+heterogeneous data across update schedules ranging from 15-minute intervals to
+annual releases. This pipeline will be reproducible, documented, and
+version-controlled on GitHub with a complete README and setup instructions.
+
+The second output is a country-level geopolitical risk scorer built on
+XGBoost, trained against historical GPR Index values and validated on holdout
+conflict onset events including documented cases of sudden conflict escalation.
+The model will produce a continuous instability score from 0 to 100 for every
+UN member state on each pipeline run, accompanied by feature importance
+rankings that allow analysts to understand the drivers of each score.
+
+The third output is an anomaly detector built on Isolation Forest, monitoring
+the risk score time-series of each country and generating alerts when
+trajectories deviate significantly from historical baselines. The detector
+will be validated against documented historical shock events and will output a
+binary alert, a severity level, and the primary feature driving the deviation.
+
+The fourth output is a geopolitical knowledge graph stored in Neo4j and
+analyzed with NetworkX, representing countries, leaders, and organizations as
+nodes and treaties, trade relationships, sanctions, voting alignments, and
+conflict events as edges. The graph will be updated on each pipeline run and
+queryable for bilateral and multilateral relationship analysis.
+
+The fifth output is a Streamlit web dashboard integrating all system outputs
+into a single operational interface, including a world risk heatmap updated in
+near-real-time, country-level drill-down panels, a live event feed, an alert
+panel surfacing anomaly detector outputs, and a Pyvis-powered interactive
+graph visualization.
+
+A realistic limitation of this project is that the risk scorer's ground truth
+labels are drawn from existing indices that themselves carry methodological
+assumptions and coverage gaps. The system's outputs should be interpreted as
+decision support signals rather than definitive assessments, and future work
+should incorporate human analyst feedback loops as demonstrated by the SAGE
+system \cite{sage2024}.
+
+
+% ---------------------------------------------------------------
+\section{Timeline}
+
+Table~\ref{tab:timeline} presents the project schedule across the eight-week
+practicum, aligned with mandatory course milestones.
+
+\begin{table}[ht]
+\caption{Eight-Week Project Timeline}
+\label{tab:timeline}
+\centering
+\begin{tabular}{p{1cm} p{3.5cm} p{5cm}}
+\hline
+\textbf{Week} & \textbf{Focus} & \textbf{Deliverable} \\
+\hline
+1 & Setup and proposal &
+  Proposal submitted, GitHub repository initialized, all API access confirmed \\
+2 & Core ingestion pipeline &
+  GDELT and ACLED scripts running, PostgreSQL schema set up, Airflow DAGs
+  configured \\
+3 & Remaining sources and EDA &
+  All 9 sources integrated, CAMEO mapping table built, feature engineering
+  begun, EDA visualizations complete \\
+4 & Prototype and mid-point presentation &
+  Working pipeline demonstrated live, prototype risk scores generated,
+  \textbf{mandatory mid-point presentation delivered} \\
+5 & Risk Scorer &
+  XGBoost model trained, validated, and tuned against GPR historical benchmark \\
+6 & Anomaly Detector and Graph &
+  Isolation Forest trained and validated on historical shock events, NetworkX
+  graph built, Neo4j loaded \\
+7 & Dashboard and integration &
+  Streamlit dashboard complete, all components integrated end to end, final
+  presentation rehearsed \\
+8 & Final presentation and submission &
+  Live system demonstrated, Regis Portfolio submitted, final report submitted \\
+\hline
+\end{tabular}
+\end{table}
+
+
+% ---------------------------------------------------------------
+\section{Conclusion}
+\textcolor{red}{Note: This section will be completed at the end of the course,
+synthesizing the findings of the completed project, reflecting on its
+contribution to data science methodology and the multilateral intelligence
+domain, and identifying directions for future development.}
+
+
+\vspace{0.5cm}
+\noindent \textbf{Note:} The final practicum report will cover all components
+listed in the course requirements including full methodology, data analysis,
+and conclusion sections currently marked as end-of-course deliverables.
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,references}
+
+\end{document}
