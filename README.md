@@ -1,5 +1,5 @@
 # International Risk Intelligence System
-### MSDS692 — Data Science Practicum I
+### MSDS692 - Data Science Practicum I
 **Regis University | Anderson College of Business and Computing**
 **Author: Oussama Ennaciri**
 
@@ -13,7 +13,7 @@ country-level risk scores, anomaly alerts, and relationship graphs for
 multilateral decision support.
 
 Built as an open, neutral alternative to proprietary systems such as Palantir
-Gotham — purpose-designed for the United Nations, ICRC, World Bank, and
+Gotham, purpose-designed for the United Nations, ICRC, World Bank, and
 international agencies that require politically neutral, globally comprehensive
 intelligence infrastructure.
 
@@ -51,17 +51,14 @@ iris_proposal/
 ## System Architecture
 
 Four layers:
-1. **Ingestion Pipeline** — Apache Airflow orchestrating all 9 sources
-2. **Graph Engine** — NetworkX + Neo4j for relationship mapping
-3. **ML Layer** — XGBoost risk scorer + Isolation Forest anomaly detector
-4. **Dashboard** — Streamlit + Pyvis live interface
+1. **Ingestion Pipeline**: Apache Airflow orchestrating all 9 sources
+2. **Graph Engine**: NetworkX + Neo4j for relationship mapping
+3. **ML Layer**: XGBoost risk scorer + Isolation Forest anomaly detector
+4. **Dashboard**: Streamlit + Pyvis live interface
 
 ---
 
 ## Compiling the Proposal
-
-**Overleaf (recommended):**
-Import this repository directly via New Project > Import from GitHub.
 
 **Local:**
 ```bash
